@@ -830,4 +830,41 @@ async function checkDNSLeak() {
     </script>
 
 
- </body></html>
+ 
+
+<script>
+const countryMap = {
+  SG: '🇸🇬 سنگاپور',
+  DE: '🇩🇪 آلمان',
+  IR: '🇮🇷 ایران',
+  NL: '🇳🇱 هلند',
+  FR: '🇫🇷 فرانسه',
+  US: '🇺🇸 ایالات متحده',
+  GB: '🇬🇧 بریتانیا',
+  TR: '🇹🇷 ترکیه',
+  AE: '🇦🇪 امارات'
+};
+
+fetch('https://www.cloudflare.com/cdn-cgi/trace')
+  .then(r => r.text())
+  .then(t => {
+    const data = Object.fromEntries(
+      t.trim().split('\n').map(l => l.split('='))
+    );
+
+    const locCode = data.loc || '';
+    const locName = countryMap[locCode] || locCode || 'نامشخص';
+
+    document.getElementById('user-ip').innerText = data.ip || 'نامشخص';
+    document.getElementById('user-location').innerText = locName;
+    document.getElementById('user-isp').innerText = data.colo || 'Cloudflare';
+  })
+  .catch(() => {
+    document.getElementById('user-ip').innerText = 'نامشخص';
+    document.getElementById('user-location').innerText = 'نامشخص';
+    document.getElementById('user-isp').innerText = 'نامشخص';
+  });
+</script>
+
+</body>
+</html>
